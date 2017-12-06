@@ -23,9 +23,34 @@ module.exports = function(grunt) {
 
    var config = {
       pkg: grunt.file.readJSON('package.json'),
-      env: process.env
+      env: process.env,
+      uglify: {
+          options: {
+              banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+          },
+
+          build: {
+              files: { 
+                  'dist/jquery.tagsinput.min.js': 'src/jquery.tagsinput.js'
+              }
+          }
+      },
+      cssmin: {
+        target: {
+          files: [{
+            expand: true,
+            cwd: 'src',
+            src: ['*.css', '!*.min.css'],
+            dest: 'dist',
+            ext: '.min.css'
+          }]
+        }
+      }
    };
 
    grunt.util._.extend(config, loadConfig('./grunt-tasks/options/'));
    grunt.initConfig(config);
+
+   grunt.loadNpmTasks('grunt-contrib-uglify');
+   grunt.loadNpmTasks('grunt-contrib-cssmin');
 };

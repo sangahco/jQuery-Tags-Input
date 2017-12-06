@@ -16,7 +16,7 @@
 
 (function($) {
 
-	var delimiter = new Array();
+	//var delimiter = new Array();
 	var tags_callbacks = new Array();
 	$.fn.doAutosize = function(o){
 	    var minWidth = $(this).data('minwidth'),
@@ -78,7 +78,7 @@
 			this.each(function() {
 				var id = $(this).attr('id');
 
-				var tagslist = $(this).val().split(delimiter[id]);
+				var tagslist = $(this).val().split($(this).data('delimiter'));
 				if (tagslist[0] == '') {
 					tagslist = new Array();
 				}
@@ -140,13 +140,13 @@
 			this.each(function() {
 				var id = $(this).attr('id');
 
-				var old = $(this).val().split(delimiter[id]);
+				var old = $(this).val().split($(this).data('delimiter'));
 
 				$('#'+id+'_tagsinput .tag').remove();
 				str = '';
 				for (i=0; i< old.length; i++) {
 					if (old[i]!=value) {
-						str = str + delimiter[id] +old[i];
+						str = str + $(this).data('delimiter') +old[i];
 					}
 				}
 
@@ -162,8 +162,7 @@
 		};
 
 	$.fn.tagExist = function(val) {
-		var id = $(this).attr('id');
-		var tagslist = $(this).val().split(delimiter[id]);
+		var tagslist = $(this).val().split($(this).data('delimiter'));
 		return (jQuery.inArray(val, tagslist) >= 0); //true when tag exists, false when not
 	};
 
@@ -207,7 +206,7 @@
 				$(this).hide();
 			}
 			var id = $(this).attr('id');
-			if (!id || delimiter[$(this).attr('id')]) {
+			if (!id) {
 				id = $(this).attr('id', 'tags' + new Date().getTime() + (uniqueIdCounter++)).attr('id');
 			}
 
@@ -219,7 +218,8 @@
 				fake_input: '#'+id+'_tag'
 			},settings);
 
-			delimiter[id] = data.delimiter;
+			$(this).data('delimiter', data.delimiter);
+			//delimiter[id] = data.delimiter;
 
 			if (settings.onAddTag || settings.onRemoveTag || settings.onChange) {
 				tags_callbacks[id] = new Array();
@@ -343,14 +343,13 @@
 	};
 
 	$.fn.tagsInput.updateTagsField = function(obj,tagslist) {
-		var id = $(obj).attr('id');
-		$(obj).val(tagslist.join(delimiter[id]));
+		$(obj).val(tagslist.join($(obj).data('delimiter')));
 	};
 
 	$.fn.tagsInput.importTags = function(obj,val) {
 		$(obj).val('');
 		var id = $(obj).attr('id');
-		var tags = val.split(delimiter[id]);
+		var tags = val.split($(obj).data('delimiter'));
 		for (i=0; i<tags.length; i++) {
 			$(obj).addTag(tags[i],{focus:false,callback:false});
 		}
